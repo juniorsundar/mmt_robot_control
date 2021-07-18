@@ -1,0 +1,31 @@
+<launch>
+<include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find mmt_robotics_gazebo)/worlds/ur5e_world.world"/>
+</include>
+
+<param name="robot_description" command="rosrun xacro xacro $(find mmt_robotics)/urdf/ur5e.urdf.xacro"/>
+
+<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -model ur5e"/>
+
+ <!-- Load joint controller configurations from YAML file to parameter server --> 
+  <rosparam file="$(find mmt_robotics)/config/ur5e.yaml" command="load"/> 
+ 
+ 
+  <!-- load the controllers --> 
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" 
+  output="screen" ns="/ur5e" args="joint_state_controller 
+            joint1_position_controller 
+            joint2_position_controller 
+            joint3_position_controller 
+            joint4_position_controller 
+            joint5_position_controller 
+            joint6_position_controller"/> 
+ 
+ 
+  <!-- convert joint states to TF transforms for rviz, etc --> 
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" 
+  respawn="false" output="screen"> 
+    <remap from="/joint_states" to="/ur5e/joint_states" /> 
+  </node>
+
+</launch>
