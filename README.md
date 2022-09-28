@@ -1,2 +1,3 @@
-# mmt_temp
-temporary repository for mmt questionnaire
+# MMT Robot Control
+
+Load and control a UR5e robot with custom-basic controllers.
